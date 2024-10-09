@@ -46,7 +46,7 @@
 
 **`git reset --hard 版本序列号`**
 
-回滚版本，此时本地工作区文件也会随之发生改变。
+回滚版本，此时本地工作区文件也会随之发生改变，版本序列号可以通过git reflog获取。
 
 ### 分支操作
 
@@ -62,13 +62,33 @@
 
 切换分支
 
+-b: 创建并切换。
+
 **`git merge 分支名`**
 
-把给定的分支合并到当前分支上
+把给定的分支合并到master分支上
+
+-d: 删除分支
+
+-D: 强制删除
+
+#### 主要的分支
+
+- master（生产）分支
+  
+- develop（开发）分支
+  
+  从master创建，作为开发部分的主要分支，在此版本上进行开发，完成后需要merge到master分支，准备上线
+
+- feature分支
+  
+  从develop创建的分支，一般是同期并行开发，但不同develop同期上线，研发完成后合并到develop分支去
+
+- hotfix分支
+  
+  从master派生出来，一般用于线上bug的紧急修复，完成后需要merge到master、test、develop等分支去
 
 ### 远程仓库操作
-
-
 
 **`git remote -V`**
 
@@ -78,26 +98,37 @@
 
 **`git remote add 别名 远程地址`**
 
-给远程链接创建别名
+添加远程仓库，并给远程仓库创建别名，这个远程地址是github/gitee仓库的http/ssh链接
 
-**`git push 别名/地址 分支`**
+**`git push [-f] [--set-upstream] 远程仓库别名/地址 本地分支名[:远端分支名]`**
 
 将本地库某一分支push到已有的远程仓库中
 
+如果远程分支名和本地名相同，可以只写本地分支名
+
+**`--set-upstream`**：推送到远端的同时建立和远端分支的关联关系，关联后就不需要在命令中
+指明远端分支名了，直接使用`git push`
+
+**`git branch -vv`**：查看本地分支和远程分支的关联关系
+
+**`-f`**：强制推送
+
 **`-u`**：将已经commit的代码push到远程仓库
-
-
 
 **`git clone 远程地址`**
 
 新建一目录，在该目录下使用bash将远程仓库完成地克隆到本地
 
-1、拉取代码	2、初始化仓库	3、为克隆的仓库自动创建别名origin
+1、拉取代码 2、初始化仓库 3、 为克隆的仓库自动创建别名origin
+
+**`git fetch [remote name] [branch name]`**
+
+将远程仓库的更新都抓取到本地，但不进行merge，如果不指定远程仓库名和分支名，则抓取全部分支。
+如果想要进行合并，需使用`git merge 远程名/分支名`
 
 **`git pull 远程仓库地址/仓库别名/ssh链接 远程分支名`**
 
-将远程仓库代码同步到本地仓库
-
+将远程仓库代码同步到本地仓库，若不指定仓库名和分支名，则默认拉取全部分支
 
 
 ### SSH免密登录
@@ -109,6 +140,23 @@
 **`ssh -T git@github.com`**
 
 登录github账户。
+
+### .gitignore文件
+
+```
+# 忽视.a文
+*.a
+# 即使忽视了.a文件，也能跟踪lib.a
+!lib.a
+# 仅忽视当前目录下的TODO文件，而非文件夹
+/TODO
+# 忽视build/目录下的所有文件
+build/
+# 忽视doc目录下的.txt文件，但是不包含doc目录下的目录内的.txt文件
+doc/*.txt
+# 忽视doc目录下的所有.txt文件，包含嵌套目录内的
+doc/**/*.pdf
+```
 
 ### 在IDEA中集成Git
 
@@ -151,7 +199,7 @@ target
 
 ```
 [core]
-	excludesfile = C:/Users/wenju/git.ignore
+ excludesfile = C:/Users/wenju/git.ignore
 ```
 
 **3、在idea中配置Git**
@@ -171,8 +219,6 @@ target
 左下角Git工具栏，打开后在中间会有日志提交记录，右键选择checkout revision即可切换版本
 
 其他操作都在idea下方Git工具栏中。
-
-
 
 ### IDEA中的GitHub
 
@@ -204,9 +250,4 @@ VCS -> Git -> Pull
 
 ### Git码云
 
-
-
 ### GitLab
-
-
-
